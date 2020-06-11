@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sjkou.net","root":"/","scheme":"Pisces","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近被公司要求去抓 GPS晶片提供的Callback 位置，所幸官網上有提供SDK 跟文件可以研讀，目前是在 CentOS 6.6上 Compile的，詳細的kernel realease 為：2.6.32-504.1.3.el6.centos.plus.x86_64 但在 compile 時會出現以下訊息 12345[root@Demo PDS_Services]# makebin&#x2F; exist">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&#x2F;usr&#x2F;bin&#x2F;ld: cannot find -lxxx 的解決方法">
+<meta property="og:url" content="https://sjkou.net/2016/05/20/usrbinld-cannot-find-lxxx/index.html">
+<meta property="og:site_name" content="阿狗的程式雜記">
+<meta property="og:description" content="最近被公司要求去抓 GPS晶片提供的Callback 位置，所幸官網上有提供SDK 跟文件可以研讀，目前是在 CentOS 6.6上 Compile的，詳細的kernel realease 為：2.6.32-504.1.3.el6.centos.plus.x86_64 但在 compile 時會出現以下訊息 12345[root@Demo PDS_Services]# makebin&#x2F; exist">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2016-05-19T16:12:51.000Z">
+<meta property="article:modified_time" content="2020-06-10T04:41:46.952Z">
+<meta property="article:author" content="SJZeng">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="GPS">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://sjkou.net/2016/05/20/usrbinld-cannot-find-lxxx/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-tw'
+  };
+</script>
+
+  <title>/usr/bin/ld: cannot find -lxxx 的解決方法 | 阿狗的程式雜記</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-77793223-3',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿狗的程式雜記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">路漫漫其修遠兮，吾將上下而求索</h1>
+      
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives<span class="badge">23</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="https://sjkou.net/2016/05/20/usrbinld-cannot-find-lxxx/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+      <meta itemprop="name" content="SJZeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿狗的程式雜記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          /usr/bin/ld: cannot find -lxxx 的解決方法
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-05-20 00:12:51" itemprop="dateCreated datePublished" datetime="2016-05-20T00:12:51+08:00">2016-05-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-06-10 12:41:46" itemprop="dateModified" datetime="2020-06-10T12:41:46+08:00">2020-06-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2016/05/20/usrbinld-cannot-find-lxxx/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/20/usrbinld-cannot-find-lxxx/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近被公司要求去抓 GPS<a href="http://source.sierrawireless.com/devices/mc-series/mc7304/" target="_blank" rel="noopener">晶片</a>提供的Callback 位置，所幸官網上有提供SDK 跟文件可以研讀，目前是在 CentOS 6.6上 Compile的，詳細的kernel realease 為：2.6.32-504.1.3.el6.centos.plus.x86_64</p>
+<p>但在 compile 時會出現以下訊息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@Demo PDS_Services]<span class="comment"># make</span></span><br><span class="line">bin/ exists - good.</span><br><span class="line">/usr/bin/ld: cannot find -lrt</span><br><span class="line">collect2: ld returned 1 <span class="built_in">exit</span> status</span><br><span class="line">make: *** [bin/pdsserviceshostx86_64] Error 1</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<p>錯誤訊息指出：少了 <strong>librt</strong> 這個library，但是查了電腦上安裝的library 之後是有安裝到的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@Demo PDS_Services]<span class="comment"># ldconfig -p | grep librt</span></span><br><span class="line">        librtmp.so.0 (libc6,x86-64) =&gt; /usr/lib64/librtmp.so.0</span><br><span class="line">        librt.so.1 (libc6,x86-64, OS ABI: Linux 2.6.18) =&gt; /lib64/librt.so.1</span><br><span class="line">        librt.so (libc6,x86-64, OS ABI: Linux 2.6.18) =&gt; /usr/lib64/librt.so</span><br></pre></td></tr></table></figure>
+
+<p>另過透過 <code>gcc</code> 測試的結果皆為正常：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@Demo PDS_Services]<span class="comment"># gcc -lrt --verbose</span></span><br><span class="line">Using built-in specs.</span><br><span class="line">Target: x86_64-redhat-linux</span><br><span class="line">Configured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --<span class="built_in">enable</span>-bootstrap --<span class="built_in">enable</span>-shared --<span class="built_in">enable</span>-threads=posix --<span class="built_in">enable</span>-checking=release --with-system-zlib --<span class="built_in">enable</span>-__cxa_atexit --<span class="built_in">disable</span>-libunwind-exceptions --<span class="built_in">enable</span>-gnu-unique-object --<span class="built_in">enable</span>-languages=c,c++,objc,obj-c++,java,fortran,ada --<span class="built_in">enable</span>-java-awt=gtk --<span class="built_in">disable</span>-dssi --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-1.5.0.0/jre --<span class="built_in">enable</span>-libgcj-multifile --<span class="built_in">enable</span>-java-maintainer-mode --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --<span class="built_in">disable</span>-libjava-multilib --with-ppl --with-cloog --with-tune=generic --with-arch_32=i686 --build=x86_64-redhat-linux</span><br><span class="line">Thread model: posix</span><br><span class="line">gcc version 4.4.7 20120313 (Red Hat 4.4.7-16) (GCC)</span><br><span class="line">COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/4.4.7/:/usr/libexec/gcc/x86_64-redhat-linux/4.4.7/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/4.4.7/:/usr/lib/gcc/x86_64-redhat-linux/:/usr/libexec/gcc/x86_64-redhat-linux/4.4.7/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/4.4.7/:/usr/lib/gcc/x86_64-redhat-linux/</span><br><span class="line">LIBRARY_PATH=/usr/lib/gcc/x86_64-redhat-linux/4.4.7/:/usr/lib/gcc/x86_64-redhat-linux/4.4.7/:/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../:/lib/:/usr/lib/</span><br><span class="line">COLLECT_GCC_OPTIONS=<span class="string">'-v'</span> <span class="string">'-mtune=generic'</span></span><br><span class="line"> /usr/libexec/gcc/x86_64-redhat-linux/4.4.7/collect2 --eh-frame-hdr --build-id -m elf_x86_64 --<span class="built_in">hash</span>-style=gnu -dynamic-linker /lib64/ld-linux-x86-64.so.2 /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/4.4.7/crtbegin.o -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7 -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7 -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../.. -lrtaaa -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/x86_64-redhat-linux/4.4.7/crtend.o /usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/crtn.o</span><br></pre></td></tr></table></figure>
+
+<p>最後在 makefile 找到某個片段：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ifeq ($(CPU),ppc_4xx)</span><br><span class="line">  CROSS_COMPILE := $(HOME)/toolchain/ELDK/usr/bin/ppc_4xx-</span><br><span class="line">  INCLUDE       := -I.. $(QMI_INCLUDE) -I$(HOME)/toolchain/ELDK/usr/lib/gcc/powerpc-linux/4.2.2/include</span><br><span class="line">  LDFLAGS       := -L$(HOME)/toolchain/ELDK/usr/lib -static -lrt -lpthread</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
+
+<p>原來 binary會被compiled 成statically，最後重新安裝了套件就解決了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">[root@Demo PDS_Services]<span class="comment"># yum search glibc</span></span><br><span class="line">Loaded plugins: fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * base: mirror01.idc.hinet.net</span><br><span class="line"> * extras: centos.cs.nctu.edu.tw</span><br><span class="line"> * rpmforge: mirror.oscc.org.my</span><br><span class="line"> * updates: ftp.jaist.ac.jp</span><br><span class="line">rpmforge                                                                                         | 1.9 kB     00:00</span><br><span class="line">updates                                                                                          | 3.4 kB     00:00</span><br><span class="line">updates/primary_db                                                                               | 749 kB     00:00</span><br><span class="line">================================================== N/S Matched: glibc ==================================================</span><br><span class="line">glibc-common.x86_64 : Common binaries and locale data <span class="keyword">for</span> glibc</span><br><span class="line">compat-glibc.x86_64 : Compatibility C library</span><br><span class="line">compat-glibc-headers.x86_64 : Header files <span class="keyword">for</span> development using standard C libraries.</span><br><span class="line">glibc.x86_64 : The GNU libc libraries</span><br><span class="line">glibc.i686 : The GNU libc libraries</span><br><span class="line">glibc-devel.x86_64 : Object files <span class="keyword">for</span> development using standard C libraries.</span><br><span class="line">glibc-devel.i686 : Object files <span class="keyword">for</span> development using standard C libraries.</span><br><span class="line">glibc-headers.x86_64 : Header files <span class="keyword">for</span> development using standard C libraries.</span><br><span class="line">glibc-static.i686 : C library static libraries <span class="keyword">for</span> -static linking.</span><br><span class="line">glibc-static.x86_64 : C library static libraries <span class="keyword">for</span> -static linking.</span><br><span class="line">glibc-utils.x86_64 : Development utilities from GNU C library</span><br><span class="line">kernel-headers.x86_64 : Header files <span class="keyword">for</span> the Linux kernel <span class="keyword">for</span> use by glibc</span><br><span class="line">latrace.i686 : LD_AUDIT feature frontend <span class="keyword">for</span> glibc 2.4+</span><br><span class="line">latrace.x86_64 : LD_AUDIT feature frontend <span class="keyword">for</span> glibc 2.4+</span><br><span class="line"></span><br><span class="line">  Name and summary matches only, use <span class="string">"search all"</span> <span class="keyword">for</span> everything.</span><br></pre></td></tr></table></figure>
+
+<p>選擇 <code>glibc-static</code> 安裝即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum install glibc-static</span></span><br></pre></td></tr></table></figure>
+
+<p>最後重新 <code>make</code> 就成功了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@Demo PDS_Services]<span class="comment"># make</span></span><br><span class="line">bin/ exists - good.</span><br><span class="line">/usr/lib/gcc/x86_64-redhat-linux/4.4.7/../../../../lib64/libpthread.a(libpthread.o): In <span class="keyword">function</span> `sem_open<span class="string">':</span></span><br><span class="line"><span class="string">(.text+0x77cd): warning: the use of `mktemp'</span> is dangerous, better use `mkstemp<span class="string">'</span></span><br><span class="line"><span class="string">[root@Demo PDS_Services]# ll bin</span></span><br><span class="line"><span class="string">total 26524</span></span><br><span class="line"><span class="string">-rwxrwxr-x 1 1001 1001 7315034 May 31 14:23 pdsservicesarm</span></span><br><span class="line"><span class="string">-rwxrwxr-x 1 1001 1001 4210669 May 31 14:23 pdsserviceshosti686</span></span><br><span class="line"><span class="string">-rwxr-xr-x 1 root root 1753341 Jul  7 12:05 pdsserviceshostx86_64</span></span><br><span class="line"><span class="string">-rwxrwxr-x 1 1001 1001 4388975 May 31 14:23 pdsservicesmips</span></span><br><span class="line"><span class="string">-rwxrwxr-x 1 1001 1001 4928396 May 31 14:23 pdsservicesmipsel</span></span><br><span class="line"><span class="string">-rwxrwxr-x 1 1001 1001 4550920 May 31 14:23 pdsservicesppc</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/GPS/" rel="tag"># GPS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/05/15/crawler-using-python3-part3/" rel="prev" title="爬蟲實戰 - Using Python3 Part3">
+      <i class="fa fa-chevron-left"></i> 爬蟲實戰 - Using Python3 Part3
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/06/01/crawler-using-python3-part4/" rel="next" title="爬蟲實戰 - Using Python3 Part4">
+      爬蟲實戰 - Using Python3 Part4 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-8692845090204404"
+       data-ad-slot="4782987859"
+       data-ad-format="auto"></ins>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SJZeng"
+      src="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+  <p class="site-author-name" itemprop="name">SJZeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/khjay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;khjay" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sjzeng.tw@gmail.com" title="E-Mail → mailto:sjzeng.tw@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/sjzeng" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;sjzeng" rel="noopener" target="_blank"><i class="fa fa-fw fa-linkedin"></i>LinkedIn</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/sjzeng.tw" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;sjzeng.tw" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-8692845090204404"
+          data-ad-slot="4782987859"
+          data-ad-format="auto"></ins>
+
+    </div>
+
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-SinJieZeng"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SJZeng</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://sjkou.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://sjkou.net/2016/05/20/usrbinld-cannot-find-lxxx/";
+    this.page.identifier = "2016/05/20/usrbinld-cannot-find-lxxx/";
+    this.page.title = "/usr/bin/ld: cannot find -lxxx 的解決方法";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://sjkou.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+  <script>
+    [].forEach.call(document.querySelectorAll('.adsbygoogle'), function(){
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    });
+  </script>
+</body>
+</html>

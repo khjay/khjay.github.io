@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sjkou.net","root":"/","scheme":"Pisces","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Level4: 檔機器人類型這一關的網頁看起來類似 Level 2: 分頁處理 但是當你把Level 2 的程式重新執行時會發現每次都是跑第一頁，就算把每次送出request 時的PHPSESSID 固定住的話還是一樣，這時候我們便需要考慮網頁的另一個特性: header。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬蟲實戰 - Using Python3 Part5">
+<meta property="og:url" content="https://sjkou.net/2016/06/11/crawler-using-python3-part5/index.html">
+<meta property="og:site_name" content="阿狗的程式雜記">
+<meta property="og:description" content="Level4: 檔機器人類型這一關的網頁看起來類似 Level 2: 分頁處理 但是當你把Level 2 的程式重新執行時會發現每次都是跑第一頁，就算把每次送出request 時的PHPSESSID 固定住的話還是一樣，這時候我們便需要考慮網頁的另一個特性: header。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2016-06-11T07:41:47.000Z">
+<meta property="article:modified_time" content="2020-06-10T04:41:46.947Z">
+<meta property="article:author" content="SJZeng">
+<meta property="article:tag" content="tutorial">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="crawler">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://sjkou.net/2016/06/11/crawler-using-python3-part5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-tw'
+  };
+</script>
+
+  <title>爬蟲實戰 - Using Python3 Part5 | 阿狗的程式雜記</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-77793223-3',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿狗的程式雜記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">路漫漫其修遠兮，吾將上下而求索</h1>
+      
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives<span class="badge">23</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="https://sjkou.net/2016/06/11/crawler-using-python3-part5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+      <meta itemprop="name" content="SJZeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿狗的程式雜記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          爬蟲實戰 - Using Python3 Part5
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-06-11 15:41:47" itemprop="dateCreated datePublished" datetime="2016-06-11T15:41:47+08:00">2016-06-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-06-10 12:41:46" itemprop="dateModified" datetime="2020-06-10T12:41:46+08:00">2020-06-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2016/06/11/crawler-using-python3-part5/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/06/11/crawler-using-python3-part5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="Level4-檔機器人類型"><a href="#Level4-檔機器人類型" class="headerlink" title="Level4: 檔機器人類型"></a>Level4: 檔機器人類型</h4><p>這一關的網頁看起來類似 <a href="http://sjkou.net/2016/05/15/crawler-using-python3-part3/">Level 2: 分頁處理</a></p>
+<p>但是當你把Level 2 的程式重新執行時會發現每次都是跑第一頁，就算把每次送出request 時的PHPSESSID 固定住的話還是一樣，這時候我們便需要考慮網頁的另一個特性: header。</p>
+<a id="more"></a>
+
+<p>所有經由HTTP protocol走在網路上的資料都如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">HTTP&#x2F;1.1 200 OK</span><br><span class="line">Accept:text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;webp,*&#x2F;*;q&#x3D;0.8</span><br><span class="line">Accept-Encoding:gzip, deflate, sdch</span><br><span class="line">Accept-Language:zh-TW,zh;q&#x3D;0.8,en-US;q&#x3D;0.6,en;q&#x3D;0.4</span><br><span class="line">Connection:keep-alive</span><br><span class="line">Host:axe-level-4.herokuapp.com</span><br><span class="line">Referer:http:&#x2F;&#x2F;axe-level-4.herokuapp.com&#x2F;lv4&#x2F;?page&#x3D;1</span><br><span class="line">Upgrade-Insecure-Requests:1</span><br><span class="line">User-Agent:Mozilla&#x2F;5.0 (Windows NT 6.3; WOW64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;55.0.2883.87 Safari&#x2F;537.36</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">HTTP&#x2F;1.1 200 OK</span><br><span class="line">Connection:keep-alive</span><br><span class="line">Content-Length:2513</span><br><span class="line">Content-Type:text&#x2F;html</span><br><span class="line">Date:Thu, 29 Dec 2016 06:37:27 GMT</span><br><span class="line">Server:Apache&#x2F;2.2.25 (Unix) PHP&#x2F;5.3.27</span><br><span class="line">Via:1.1 vegur</span><br><span class="line">X-Powered-By:PHP&#x2F;5.3.27</span><br><span class="line">&#123;HTML CONTENT&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以我們的爬蟲程式要手動設定header，以下為設定的步驟</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">"Accept"</span>: <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"</span></span><br><span class="line">    <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate, sdch"</span></span><br><span class="line">    <span class="string">"Accept-Language"</span>: <span class="string">"zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4"</span></span><br><span class="line">    <span class="string">"Connection"</span>: <span class="string">"keep-alive"</span></span><br><span class="line">    <span class="string">"Host"</span>: <span class="string">"axe-level-4.herokuapp.com"</span></span><br><span class="line">    <span class="string">"Referer"</span>: <span class="string">"http://axe-level-4.herokuapp.com/lv4/?page=1"</span></span><br><span class="line">    <span class="string">"Upgrade-Insecure-Requests"</span>: <span class="string">"1"</span></span><br><span class="line">    <span class="string">"User-Agent"</span>: <span class="string">"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36"</span></span><br><span class="line">&#125;</span><br><span class="line">result = requests.get(url, headers=headers)</span><br></pre></td></tr></table></figure>
+
+<p>最後我們整理後的程式如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf8 -*-</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree, html</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">"Accept"</span>: <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"</span></span><br><span class="line">        <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate, sdch"</span></span><br><span class="line">        <span class="string">"Accept-Language"</span>: <span class="string">"zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4"</span></span><br><span class="line">        <span class="string">"Connection"</span>: <span class="string">"keep-alive"</span></span><br><span class="line">        <span class="string">"Host"</span>: <span class="string">"axe-level-4.herokuapp.com"</span></span><br><span class="line">        <span class="string">"Referer"</span>: <span class="string">"http://axe-level-4.herokuapp.com/lv4/?page=1"</span></span><br><span class="line">        <span class="string">"Upgrade-Insecure-Requests"</span>: <span class="string">"1"</span></span><br><span class="line">        <span class="string">"User-Agent"</span>: <span class="string">"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36"</span></span><br><span class="line">    &#125;</span><br><span class="line">    jsonData = <span class="string">'['</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">25</span>):</span><br><span class="line">        result = requests.get(<span class="string">"http://axe-level-4.herokuapp.com/lv4/?page=%d"</span> % i, headers=headers)</span><br><span class="line">        result.encoding=<span class="string">'utf8'</span></span><br><span class="line">        root = etree.fromstring(result.text, etree.HTMLParser())</span><br><span class="line">        <span class="keyword">for</span> row <span class="keyword">in</span> root.xpath(<span class="string">"//table[@class='table']/tr[position()&gt;1]"</span>):</span><br><span class="line">            column = row.xpath(<span class="string">"./td/text()"</span>)</span><br><span class="line">            tople = <span class="string">'&#123;"town": "%s", "village": "%s", "name": "%s"&#125;,'</span> % (column[<span class="number">0</span>], column[<span class="number">1</span>], column[<span class="number">2</span>])</span><br><span class="line">            jsonData += tople</span><br><span class="line">    print(jsonData[<span class="number">0</span>:<span class="number">-1</span>] + <span class="string">']'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>以上就是我們這一章節的教學，下一節會介紹如何把thread 應用在爬蟲內。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tutorial/" rel="tag"># tutorial</a>
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/crawler/" rel="tag"># crawler</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/06/01/crawler-using-python3-part4/" rel="prev" title="爬蟲實戰 - Using Python3 Part4">
+      <i class="fa fa-chevron-left"></i> 爬蟲實戰 - Using Python3 Part4
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/03/crawler-using-python3-part6/" rel="next" title="爬蟲實戰 - Using Python3 Part6">
+      爬蟲實戰 - Using Python3 Part6 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-8692845090204404"
+       data-ad-slot="4782987859"
+       data-ad-format="auto"></ins>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Level4-檔機器人類型"><span class="nav-number">1.</span> <span class="nav-text">Level4: 檔機器人類型</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SJZeng"
+      src="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+  <p class="site-author-name" itemprop="name">SJZeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/khjay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;khjay" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sjzeng.tw@gmail.com" title="E-Mail → mailto:sjzeng.tw@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/sjzeng" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;sjzeng" rel="noopener" target="_blank"><i class="fa fa-fw fa-linkedin"></i>LinkedIn</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/sjzeng.tw" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;sjzeng.tw" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-8692845090204404"
+          data-ad-slot="4782987859"
+          data-ad-format="auto"></ins>
+
+    </div>
+
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-SinJieZeng"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SJZeng</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://sjkou.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://sjkou.net/2016/06/11/crawler-using-python3-part5/";
+    this.page.identifier = "2016/06/11/crawler-using-python3-part5/";
+    this.page.title = "爬蟲實戰 - Using Python3 Part5";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://sjkou.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+  <script>
+    [].forEach.call(document.querySelectorAll('.adsbygoogle'), function(){
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    });
+  </script>
+</body>
+</html>

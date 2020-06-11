@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sjkou.net","root":"/","scheme":"Pisces","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="TGONext - 技術管理組結業心得今年年初的時候關注到 TGONetworks 舉辦了場 TGONext 有趣的活動，該活動由台灣的高階主管聯合舉辦，針對技術領域的三大主題：技術創業、技術管理、技術架構進行經驗的傳承。 撇除技術領域來看的話，不管是工程師或是 PM 或是行銷人員總會面臨到，在茫茫職海中我該繼續專研專業領域，或是選擇管理職，抑或是想不開走上創業的不歸路。 任何一條路線皆無好壞，端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TGONext-technology-management-team-the-end">
+<meta property="og:url" content="https://sjkou.net/2020/06/10/TGONext-technology-management-team-the-end/index.html">
+<meta property="og:site_name" content="阿狗的程式雜記">
+<meta property="og:description" content="TGONext - 技術管理組結業心得今年年初的時候關注到 TGONetworks 舉辦了場 TGONext 有趣的活動，該活動由台灣的高階主管聯合舉辦，針對技術領域的三大主題：技術創業、技術管理、技術架構進行經驗的傳承。 撇除技術領域來看的話，不管是工程師或是 PM 或是行銷人員總會面臨到，在茫茫職海中我該繼續專研專業領域，或是選擇管理職，抑或是想不開走上創業的不歸路。 任何一條路線皆無好壞，端">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://sjkou.net/images/TGONext-technology-management-team-the-end.jpg">
+<meta property="article:published_time" content="2020-06-10T05:56:10.000Z">
+<meta property="article:modified_time" content="2020-06-11T07:33:34.979Z">
+<meta property="article:author" content="SJZeng">
+<meta property="article:tag" content="TGONext">
+<meta property="article:tag" content="Management">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sjkou.net/images/TGONext-technology-management-team-the-end.jpg">
+
+<link rel="canonical" href="https://sjkou.net/2020/06/10/TGONext-technology-management-team-the-end/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-tw'
+  };
+</script>
+
+  <title>TGONext-technology-management-team-the-end | 阿狗的程式雜記</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-77793223-3',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿狗的程式雜記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">路漫漫其修遠兮，吾將上下而求索</h1>
+      
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives<span class="badge">23</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="https://sjkou.net/2020/06/10/TGONext-technology-management-team-the-end/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+      <meta itemprop="name" content="SJZeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿狗的程式雜記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          TGONext-technology-management-team-the-end
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-06-10 13:56:10" itemprop="dateCreated datePublished" datetime="2020-06-10T13:56:10+08:00">2020-06-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-06-11 15:33:34" itemprop="dateModified" datetime="2020-06-11T15:33:34+08:00">2020-06-11</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2020/06/10/TGONext-technology-management-team-the-end/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/10/TGONext-technology-management-team-the-end/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="TGONext-技術管理組結業心得"><a href="#TGONext-技術管理組結業心得" class="headerlink" title="TGONext - 技術管理組結業心得"></a>TGONext - 技術管理組結業心得</h1><p>今年年初的時候關注到 <a href="https://www.facebook.com/tgotaiwan/" target="_blank" rel="noopener">TGONetworks</a> 舉辦了場 <a href="https://next.tgonetworks.org/" target="_blank" rel="noopener">TGONext</a> 有趣的活動，該活動由台灣的高階主管聯合舉辦，針對技術領域的三大主題：技術創業、技術管理、技術架構進行經驗的傳承。</p>
+<p>撇除技術領域來看的話，不管是工程師或是 PM 或是行銷人員總會面臨到，在茫茫職海中我該繼續專研專業領域，或是選擇管理職，抑或是想不開走上創業的不歸路。</p>
+<p>任何一條路線皆無好壞，端看如何做選擇。本文梳理了筆者如何在三大領域中做選擇，以及這半年以來技術管理組的參與心得。</p>
+<a id="more"></a>
+
+<h2 id="主題的選擇"><a href="#主題的選擇" class="headerlink" title="主題的選擇"></a>主題的選擇</h2><p>以技術領域而言，可概括為三條路線：Leader、VP、CTO</p>
+<ol>
+<li><p>Leader：<br>技術角色。團隊內的技術大神，把技術做到專精</p>
+</li>
+<li><p>VP：<br>同樣也是技術大神，但除了技術外也是管理職的角色</p>
+</li>
+<li><p>CTO：<br>同樣是技術+管理的角色，但更多是需處理商業上的事，透過商業來收斂公司內的技術發展</p>
+</li>
+</ol>
+<p>在路線的選擇上絕非做越久越可以往下個角色邁進，更多的是思維上的轉變。以 VP 的角色而言，最重要的是溝通能力，也是管理職位需具備的能力，如何做到向上及向下管理更是門藝術，該如何把自己的想把傳達給下面的團隊執行，以及該如何說服上面的人撥資源供團隊運用，皆是管理人員的大挑戰。</p>
+<p>而 CTO 同樣也是個有趣的職位，當時主管僅問了一句話，我便認知到尚未具備 CTO 的思維。</p>
+<blockquote>
+<p>假設給你足夠多的人以及足夠多的錢，你知道要開一間怎樣的公司嗎？</p>
+</blockquote>
+<p>假設這個問題你有答案，恭喜你。你已經具備 CTO 該有的三項能力：技術能力、管理能力以及商業思維。</p>
+<p>筆者因想繼續精進自己的溝通能力，便選擇往 VP 的職位邁進。</p>
+<h2 id="如何問問題？"><a href="#如何問問題？" class="headerlink" title="如何問問題？"></a>如何問問題？</h2><p><strong>「明明我已經告訴你應該怎麼做了，為什麼你做出來成果跟我想像的完全不一樣」</strong></p>
+<p>“溝通” 是管理組第一次聚會的議題，導師給了一本書：<a href="https://www.books.com.tw/products/0010478689" target="_blank" rel="noopener">你會問問題嗎：問對問題是成功領導的第一步</a>，第一次聚會便是針對如何溝通做討論。</p>
+<p>不論是管理職或是團隊成員一定很常遇到這情境，做法都告訴你了，你也說清楚該如何做了，但後續的成果跟預期完全相反，問題出在哪裡？</p>
+<h3 id="盡量別幫別人解決問題"><a href="#盡量別幫別人解決問題" class="headerlink" title="盡量別幫別人解決問題"></a>盡量別幫別人解決問題</h3><p>假設溝通的過程不限於 “我告訴你” 而已，而是我們大家共同交換意見解決問題，問題是否會改善？</p>
+<p>舉例來說，當團隊成員說：「專案開發過程中寫測試非常浪費時間，如果不寫測試我們能將專案上提早數天時間上線。」，這時你應該怎麼辦？</p>
+<p><strong>方法一：直接告訴他做法</strong><br>你可能會直接跟他介紹寫測試的優點，藉此說服他能寫測試，但團隊成員的心理是抗拒的，就算有補上測試案例也只是表面，一但沒人監督或是換了新主管，整個團隊便會打回原形。</p>
+<p><strong>方法二：提問</strong><br>讓團隊成員認同寫測試這件事是有幫助的，你可以針對幾件事情做幾個提問：</p>
+<ol>
+<li>專案若提前上線對我們會有什麼幫助？</li>
+<li>你要如何確保你寫的功能是正常的？</li>
+<li>你要如何確保加了新功能後不會影響原有的功能？</li>
+<li>假設功能出錯且修復後，你要如何確保相同的問題不再發生？</li>
+</ol>
+<p>團隊成員在回答的過程中會開始思考問題如何解決，最後他們會認同其實寫測試是可以解決上述所提的事項。</p>
+<p>但你在過程中僅是一直問問題而已，並沒有幫他們解決問題，因為問題是由他們自己想到而且解決的，所以會格外相信自己所得出的結論，但那又如何，事情仍是朝著你希望的方向繼續發展。</p>
+<p>因此回歸到第一次聚會的主題，我們討論了如何溝通這件事。</p>
+<h2 id="績效考核與管理"><a href="#績效考核與管理" class="headerlink" title="績效考核與管理"></a>績效考核與管理</h2><p>在第二場聚會中，每個人分享了公司內部的績效考核方式，並提出管理上的優缺點與大家討論，但有趣的是，部分與會者後續的解決方法其實極為類似。</p>
+<p>回到績效考核的本質，績效考核的目的為何？</p>
+<p>公司當然不是吃素的，開公司大部分都是為了賺錢，因此目的很單純，如何幫公司變得更好便是績效考核的目的，更直白的說：<strong>誰幫公司賺了最多錢。</strong></p>
+<p>因此考核的第一步，不是開始設計 KPI 及 OKR 要有什麼內容，而是攤開公司的成本結構，從毛利率下手，想辦法把利潤與所有公司所有的同仁綁在一起。</p>
+<blockquote>
+<p>毛利率 = 銷售營收 - 銷售成本</p>
+</blockquote>
+<h3 id="工程團隊如何與利潤掛鉤？"><a href="#工程團隊如何與利潤掛鉤？" class="headerlink" title="工程團隊如何與利潤掛鉤？"></a>工程團隊如何與利潤掛鉤？</h3><p>這問題端看公司如何待開發團隊，開發部門隸屬於成本中心，還是事業中心。成本中心是花錢的單位，自然無法與利潤掛鉤。</p>
+<p>因此回到上述所說，公司的組織結構其實有一部分決定了績效考核的目的與方式，兩者需相輔相成才是有意義的績效管理。</p>
+<p>當工程團隊與利潤掛鉤後，組織上的變化是有趣的，你會發現工程師平常最愛講的測試覆蓋率跟重構已經沒有意義，因為這兩件事與利益沒關係。取得代之的是大家會開始量化重構後的效益，而不是注重在重構這件事上。</p>
+<h2 id="Business-Model-Canvas"><a href="#Business-Model-Canvas" class="headerlink" title="Business Model Canvas"></a>Business Model Canvas</h2><p>這是 <a href="https://next.tgonetworks.org/" target="_blank" rel="noopener">TGONext</a> 的最後一場聚會，我們討論了商業的本質。</p>
+<p>商業的本質說穿了就是公司靠什麼賺錢，我們使用 Business Model Canvas 這方法來檢視商業策略，但可惜的是，會議的上禮拜瘋狂加班，僅能聽其他與會者提出他們畫好的 Canvas 做討論。</p>
+<h3 id="延伸問題"><a href="#延伸問題" class="headerlink" title="延伸問題"></a>延伸問題</h3><h4 id="1-商業模式與技術債該如何做平衡"><a href="#1-商業模式與技術債該如何做平衡" class="headerlink" title="1. 商業模式與技術債該如何做平衡"></a>1. 商業模式與技術債該如何做平衡</h4><p>任何事都有大前提，商業模式的大前提就是先讓公司存活。</p>
+<p>一個極端的案例：在有限的時間內，就算技術債債臺高築、後人維護痛苦得要死，但至少產品持續有人買單，公司能存活就是大家的勝利。</p>
+<p>只有在公司能存活的前提下所討論的技術債才是有意義的。</p>
+<h4 id="2-PM-如何要求-RD-寫文件"><a href="#2-PM-如何要求-RD-寫文件" class="headerlink" title="2. PM 如何要求 RD 寫文件"></a>2. PM 如何要求 RD 寫文件</h4><p>PM 不懂技術，就算要求 RD 寫文件也不會受到尊重。但可以塑造團隊的共同敵人，例如找顧問或技術大神，跟團隊說一切都是顧問要求的，吸引成員的砲火。</p>
+<p>擁有共同敵人的革命情懷，雖然 RD 們文件寫的不甘願，但也達到 PM 的目的。</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>從二月的開幕式至今也近半年，在溝通、管理以及商業模式這三大面向都做了很不錯的討論。尤其是導師也是業界知名的高階主管，藉由這幾場聚會其實解決了公司上遇到的許多疑難雜症。</p>
+<p>另一個更重要的一點是，<strong>參與這幾場活動的人都是你的人脈啊！</strong> 平時要去哪裡認識這麼多高階主管，就算不是帶著問題而來，日後想換去新的公司你也有更多人可以聯絡。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TGONext/" rel="tag"># TGONext</a>
+              <a href="/tags/Management/" rel="tag"># Management</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/18/TGONext-high-throught-and-high-concurrency/" rel="prev" title="TGONext - 高併發高流量">
+      <i class="fa fa-chevron-left"></i> TGONext - 高併發高流量
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-8692845090204404"
+       data-ad-slot="4782987859"
+       data-ad-format="auto"></ins>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TGONext-技術管理組結業心得"><span class="nav-number">1.</span> <span class="nav-text">TGONext - 技術管理組結業心得</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主題的選擇"><span class="nav-number">1.1.</span> <span class="nav-text">主題的選擇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何問問題？"><span class="nav-number">1.2.</span> <span class="nav-text">如何問問題？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#盡量別幫別人解決問題"><span class="nav-number">1.2.1.</span> <span class="nav-text">盡量別幫別人解決問題</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#績效考核與管理"><span class="nav-number">1.3.</span> <span class="nav-text">績效考核與管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#工程團隊如何與利潤掛鉤？"><span class="nav-number">1.3.1.</span> <span class="nav-text">工程團隊如何與利潤掛鉤？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Business-Model-Canvas"><span class="nav-number">1.4.</span> <span class="nav-text">Business Model Canvas</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延伸問題"><span class="nav-number">1.4.1.</span> <span class="nav-text">延伸問題</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-商業模式與技術債該如何做平衡"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">1. 商業模式與技術債該如何做平衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-PM-如何要求-RD-寫文件"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">2. PM 如何要求 RD 寫文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#總結"><span class="nav-number">1.5.</span> <span class="nav-text">總結</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SJZeng"
+      src="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+  <p class="site-author-name" itemprop="name">SJZeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/khjay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;khjay" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sjzeng.tw@gmail.com" title="E-Mail → mailto:sjzeng.tw@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/sjzeng" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;sjzeng" rel="noopener" target="_blank"><i class="fa fa-fw fa-linkedin"></i>LinkedIn</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/sjzeng.tw" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;sjzeng.tw" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-8692845090204404"
+          data-ad-slot="4782987859"
+          data-ad-format="auto"></ins>
+
+    </div>
+
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-SinJieZeng"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SJZeng</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://sjkou.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://sjkou.net/2020/06/10/TGONext-technology-management-team-the-end/";
+    this.page.identifier = "2020/06/10/TGONext-technology-management-team-the-end/";
+    this.page.title = "TGONext-technology-management-team-the-end";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://sjkou.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+  <script>
+    [].forEach.call(document.querySelectorAll('.adsbygoogle'), function(){
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    });
+  </script>
+</body>
+</html>

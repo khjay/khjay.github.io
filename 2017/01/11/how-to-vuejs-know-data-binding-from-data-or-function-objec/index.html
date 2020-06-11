@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sjkou.net","root":"/","scheme":"Pisces","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本文撰寫時的Vue.js 版本為2.1.8 Vue.js 使用HTML-based 的模板語法，允許開發者將Dom 綁定至底層的Vue instance，在讓Vue.js 再透過其本身的機制渲染網頁 而Vue.js 數據綁定的方式有兩種，一種是修改data 屬性的方法，而另一種是實作 computed function ，先來介紹一下這兩種使用方法  using data property 123">
+<meta property="og:type" content="article">
+<meta property="og:title" content="談Vue.js  &#96;數據綁定&#96; 的資料從何而來">
+<meta property="og:url" content="https://sjkou.net/2017/01/11/how-to-vuejs-know-data-binding-from-data-or-function-objec/index.html">
+<meta property="og:site_name" content="阿狗的程式雜記">
+<meta property="og:description" content="本文撰寫時的Vue.js 版本為2.1.8 Vue.js 使用HTML-based 的模板語法，允許開發者將Dom 綁定至底層的Vue instance，在讓Vue.js 再透過其本身的機制渲染網頁 而Vue.js 數據綁定的方式有兩種，一種是修改data 屬性的方法，而另一種是實作 computed function ，先來介紹一下這兩種使用方法  using data property 123">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-01-11T06:25:54.000Z">
+<meta property="article:modified_time" content="2020-06-10T04:41:46.949Z">
+<meta property="article:author" content="SJZeng">
+<meta property="article:tag" content="javaScript">
+<meta property="article:tag" content="vue.js">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://sjkou.net/2017/01/11/how-to-vuejs-know-data-binding-from-data-or-function-objec/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-tw'
+  };
+</script>
+
+  <title>談Vue.js  `數據綁定` 的資料從何而來 | 阿狗的程式雜記</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-77793223-3',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿狗的程式雜記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">路漫漫其修遠兮，吾將上下而求索</h1>
+      
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives<span class="badge">23</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="https://sjkou.net/2017/01/11/how-to-vuejs-know-data-binding-from-data-or-function-objec/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+      <meta itemprop="name" content="SJZeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿狗的程式雜記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          談Vue.js  `數據綁定` 的資料從何而來
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-01-11 14:25:54" itemprop="dateCreated datePublished" datetime="2017-01-11T14:25:54+08:00">2017-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-06-10 12:41:46" itemprop="dateModified" datetime="2020-06-10T12:41:46+08:00">2020-06-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2017/01/11/how-to-vuejs-know-data-binding-from-data-or-function-objec/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/01/11/how-to-vuejs-know-data-binding-from-data-or-function-objec/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><em>本文撰寫時的Vue.js 版本為2.1.8</em></p>
+<p><strong>Vue.js 使用HTML-based 的模板語法，允許開發者將Dom 綁定至底層的Vue instance，在讓Vue.js 再透過其本身的機制渲染網頁</strong></p>
+<p>而Vue.js 數據綁定的方式有兩種，一種是修改data 屬性的方法，而另一種是實作 <code>computed function</code> ，先來介紹一下這兩種使用方法</p>
+<ol>
+<li><p>using data property</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> vm = <span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    data: &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'message'</span>: <span class="string">'hello'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="built_in">console</span>.log(vm.message)</span><br><span class="line"><span class="comment">// output: hello</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Using computed function</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> vm = <span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    computed: &#123;</span><br><span class="line">        message() &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'hello'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="built_in">console</span>.log(vm.message);</span><br><span class="line"><span class="comment">// output: hello</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<a id="more"></a>
+
+<p>上方這兩種方法都會輸出 “hello”，你也可以把hello輸出在dom 內：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;p&gt;&#123;&#123; message &#125;&#125;&lt;<span class="regexp">/p&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是vue.js 怎麼知道要到 <code>data</code> 或者 <code>computed</code> 屬性內尋找相對應的 key 或者 function。<br>其實data 的key 與 function 同時只能存在一個，如果我們兩個都同時宣告的話：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    data: &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'message'</span>: <span class="string">'hello'</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">    computed: &#123;</span><br><span class="line">        message() &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'hello'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>重啟網頁時會看到以下警告：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vue.js:525 [Vue warn]: existing instance property &quot;message&quot; will be overwritten by a computed property with the same name. </span><br><span class="line">(found in root instance)</span><br></pre></td></tr></table></figure>
+
+<p>回到<a href="https://unpkg.com/vue@2.1.8/dist/vue.js" target="_blank" rel="noopener">原始碼</a>內，Vue.js 的初始化階段在3407 行附近：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Vue$3</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="string">"development"</span> !== <span class="string">'production'</span> &amp;&amp;</span><br><span class="line">    !(<span class="keyword">this</span> <span class="keyword">instanceof</span> Vue$<span class="number">3</span>)) &#123;</span><br><span class="line">    warn(<span class="string">'Vue is a constructor and should be called with the `new` keyword'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">this</span>._init(options);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">initMixin(Vue$<span class="number">3</span>);</span><br><span class="line">stateMixin(Vue$<span class="number">3</span>);</span><br><span class="line">eventsMixin(Vue$<span class="number">3</span>);</span><br><span class="line">lifecycleMixin(Vue$<span class="number">3</span>);</span><br><span class="line">renderMixin(Vue$<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<p>上方的五個函數代表了Vue.js 的執行週期</p>
+<div style="width: 40%; height: 40%">
+![vue.js lifecycle](https://vuejs.org/images/lifecycle.png)
+</div>
+
+<p>而我們關心的資料初始化階段則是在 <code>beforeCreate</code> 到 <code>created</code> 之：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initMixin</span> (<span class="params">Vue</span>) </span>&#123;</span><br><span class="line">  Vue.prototype._init = <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> vm = <span class="keyword">this</span>;</span><br><span class="line">    <span class="comment">// 略 </span></span><br><span class="line">    initLifecycle(vm);</span><br><span class="line">    initEvents(vm);</span><br><span class="line">    callHook(vm, <span class="string">'beforeCreate'</span>);</span><br><span class="line">    initState(vm);</span><br><span class="line">    callHook(vm, <span class="string">'created'</span>);</span><br><span class="line">    initRender(vm);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此我們直接來看 <code>initState</code> 的函式，行數不多就全部貼上來了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initState</span> (<span class="params">vm</span>) </span>&#123;</span><br><span class="line">  vm._watchers = [];</span><br><span class="line">  <span class="keyword">var</span> opts = vm.$options;</span><br><span class="line">  <span class="keyword">if</span> (opts.props) &#123; initProps(vm, opts.props); &#125;</span><br><span class="line">  <span class="keyword">if</span> (opts.methods) &#123; initMethods(vm, opts.methods); &#125;</span><br><span class="line">  <span class="keyword">if</span> (opts.data) &#123;</span><br><span class="line">    initData(vm);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    observe(vm._data = &#123;&#125;, <span class="literal">true</span> <span class="comment">/* asRootData */</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (opts.computed) &#123; initComputed(vm, opts.computed); &#125;</span><br><span class="line">  <span class="keyword">if</span> (opts.watch) &#123; initWatch(vm, opts.watch); &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>這邊可以看到檢查property 的階段為<br><code>props -&gt; methods -&gt; data -&gt; computed -&gt; watch</code><br>比照我們剛剛收到的warning，<code>property &quot;message&quot; will be overwritten by a computed property</code> ，data初始化階段比computed 還早，當然會被改寫。</p>
+<h2 id="InitData"><a href="#InitData" class="headerlink" title="InitData"></a>InitData</h2><p>接下來我們來看看 初始化data 的方式怎麼實作的吧：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initData</span> (<span class="params">vm</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> data = vm.$options.data;</span><br><span class="line">  data = vm._data = <span class="keyword">typeof</span> data === <span class="string">'function'</span></span><br><span class="line">    ? data.call(vm)</span><br><span class="line">    : data || &#123;&#125;;</span><br><span class="line">  <span class="keyword">if</span> (!isPlainObject(data)) &#123;</span><br><span class="line">    data = &#123;&#125;;</span><br><span class="line">    <span class="string">"development"</span> !== <span class="string">'production'</span> &amp;&amp; warn(</span><br><span class="line">      <span class="string">'data functions should return an object:\n'</span> +</span><br><span class="line">      <span class="string">'https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function'</span>,</span><br><span class="line">      vm</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// proxy data on instance</span></span><br><span class="line">  <span class="keyword">var</span> keys = <span class="built_in">Object</span>.keys(data);</span><br><span class="line">  <span class="keyword">var</span> props = vm.$options.props;</span><br><span class="line">  <span class="keyword">var</span> i = keys.length;</span><br><span class="line">  <span class="keyword">while</span> (i--) &#123;</span><br><span class="line">    <span class="keyword">if</span> (props &amp;&amp; hasOwn(props, keys[i])) &#123;</span><br><span class="line">      <span class="string">"development"</span> !== <span class="string">'production'</span> &amp;&amp; warn(</span><br><span class="line">        <span class="string">"The data property \""</span> + (keys[i]) + <span class="string">"\" is already declared as a prop. "</span> +</span><br><span class="line">        <span class="string">"Use prop default value instead."</span>,</span><br><span class="line">        vm</span><br><span class="line">      );</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      proxy(vm, keys[i]);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// observe data</span></span><br><span class="line">  observe(data, <span class="literal">true</span> <span class="comment">/* asRootData */</span>);    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一開始先檢查data 的格式是function 或者 object，會這樣檢查的原因是因為在data 內有兩種實作方式：</p>
+<ol>
+<li><p>implement with object</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data: &#123;</span><br><span class="line">    message: <span class="string">'hello'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>implement with function</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data() &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        message: <span class="string">'hello'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>資料格式無誤後在透過while 迴圈取得key value pair，這時還需檢查一次該key 是否為所設定的props，也就是說你不能寫成這樣的格式：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    props: [<span class="string">'message'</span>],</span><br><span class="line">    data: &#123;</span><br><span class="line">        message: <span class="string">'hello'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>兩次檢查都無誤後便可以透過 <code>proxy(vm, keys[i]);</code> 直接賦值了。</p>
+<p>關於<code>proxy</code> 內的 <code>defineProperty</code>用法可以參考網路上的<a href="http://www.jianshu.com/p/07ba2b0c8fca" target="_blank" rel="noopener">文章</a>，這邊不多加說明。</p>
+<h2 id="InitComputed"><a href="#InitComputed" class="headerlink" title="InitComputed"></a>InitComputed</h2><p>與 initData 相比之下，initComputed 的處理流程簡單許多</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initComputed</span> (<span class="params">vm, computed</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> computed) &#123;</span><br><span class="line">    <span class="comment">/* istanbul ignore if */</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"development"</span> !== <span class="string">'production'</span> &amp;&amp; key <span class="keyword">in</span> vm) &#123;</span><br><span class="line">      warn(</span><br><span class="line">        <span class="string">"existing instance property \""</span> + key + <span class="string">"\" will be "</span> +</span><br><span class="line">        <span class="string">"overwritten by a computed property with the same name."</span>,</span><br><span class="line">        vm</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> userDef = computed[key];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> userDef === <span class="string">'function'</span>) &#123;</span><br><span class="line">      computedSharedDefinition.get = makeComputedGetter(userDef, vm);</span><br><span class="line">      computedSharedDefinition.set = noop;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      computedSharedDefinition.get = userDef.get</span><br><span class="line">        ? userDef.cache !== <span class="literal">false</span></span><br><span class="line">          ? makeComputedGetter(userDef.get, vm)</span><br><span class="line">          : bind$<span class="number">1</span>(userDef.get, vm)</span><br><span class="line">        : noop;</span><br><span class="line">      computedSharedDefinition.set = userDef.set</span><br><span class="line">        ? bind$<span class="number">1</span>(userDef.set, vm)</span><br><span class="line">        : noop;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(vm, key, computedSharedDefinition);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先檢查function 內所有的函數名稱是否與目前在data 內註冊的名稱衝突，如果衝突就取代，這也是我們上方看到會警告overwritten 的原因了。</p>
+<p>檢查完便可以把function name 註冊到vm instance內了，Vue.js 提供兩種實作方式</p>
+<ol>
+<li>default getter<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    computed: &#123;</span><br><span class="line">        message: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'hello'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+<li>setter and getter<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    data: &#123;</span><br><span class="line">        showMessage: <span class="string">''</span></span><br><span class="line">    &#125;,</span><br><span class="line">    computed: &#123;</span><br><span class="line">        message: &#123;</span><br><span class="line">            <span class="keyword">get</span>: function () &#123;</span><br><span class="line">                <span class="keyword">return</span> showMessage;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="keyword">set</span>: function(value) &#123;</span><br><span class="line">                <span class="keyword">this</span>.showMessage = value;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>Vue.js 在computed function 預設是只做getter，但也允許你另外實作setter<br>以上是Vue.js 透過instance 取得data 的流程，希望對大家有幫助。</p>
+<p>參考資料：<br><a href="https://vuejs.org/v2/guide/syntax.html#Interpolations" target="_blank" rel="noopener">Vue.js官網</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javaScript/" rel="tag"># javaScript</a>
+              <a href="/tags/vue-js/" rel="tag"># vue.js</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/01/09/shorthand-of-v-bind-and-v-on/" rel="prev" title="v-bind 與 v-on 的縮寫">
+      <i class="fa fa-chevron-left"></i> v-bind 與 v-on 的縮寫
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/21/solid-single-responsibility-principle/" rel="next" title="SOLID 原則 - Single Responsibility Principle">
+      SOLID 原則 - Single Responsibility Principle <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-8692845090204404"
+       data-ad-slot="4782987859"
+       data-ad-format="auto"></ins>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#InitData"><span class="nav-number">1.</span> <span class="nav-text">InitData</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InitComputed"><span class="nav-number">2.</span> <span class="nav-text">InitComputed</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SJZeng"
+      src="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+  <p class="site-author-name" itemprop="name">SJZeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/khjay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;khjay" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sjzeng.tw@gmail.com" title="E-Mail → mailto:sjzeng.tw@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/sjzeng" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;sjzeng" rel="noopener" target="_blank"><i class="fa fa-fw fa-linkedin"></i>LinkedIn</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/sjzeng.tw" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;sjzeng.tw" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-8692845090204404"
+          data-ad-slot="4782987859"
+          data-ad-format="auto"></ins>
+
+    </div>
+
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-SinJieZeng"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SJZeng</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://sjkou.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://sjkou.net/2017/01/11/how-to-vuejs-know-data-binding-from-data-or-function-objec/";
+    this.page.identifier = "2017/01/11/how-to-vuejs-know-data-binding-from-data-or-function-objec/";
+    this.page.title = "談Vue.js  `數據綁定` 的資料從何而來";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://sjkou.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+  <script>
+    [].forEach.call(document.querySelectorAll('.adsbygoogle'), function(){
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    });
+  </script>
+</body>
+</html>

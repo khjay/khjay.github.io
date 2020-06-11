@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sjkou.net","root":"/","scheme":"Pisces","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="近日找遍各大blog 從外太空找到行天宮終於下定決心在Ghost 定了下來當然如果你想host 一個blog 而不花到任何費用是 絕對不可能的 最主要的花費如下  主機費用 Domain name 申請  其實你也可以選擇 wordpress，或者 logdown 這些國內外知名的部落格來寫作，如果都選擇最低標準的方案或許不會花到任何錢 但是身為專業的工程師就要全部自己來阿">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何在Heroku 上安裝Ghost Blog">
+<meta property="og:url" content="https://sjkou.net/2016/05/02/how-to-install-ghost-on-heroku/index.html">
+<meta property="og:site_name" content="阿狗的程式雜記">
+<meta property="og:description" content="近日找遍各大blog 從外太空找到行天宮終於下定決心在Ghost 定了下來當然如果你想host 一個blog 而不花到任何費用是 絕對不可能的 最主要的花費如下  主機費用 Domain name 申請  其實你也可以選擇 wordpress，或者 logdown 這些國內外知名的部落格來寫作，如果都選擇最低標準的方案或許不會花到任何錢 但是身為專業的工程師就要全部自己來阿">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://drive.google.com/uc?export=view&id=1c6888Z7vDsF2Iib7V06-RJvkkuU0g2bK">
+<meta property="og:image" content="https://drive.google.com/uc?export=view&id=1-GEeEMd9bam9Kzx-z79ZaRVxa6CNJXWM">
+<meta property="og:image" content="https://drive.google.com/uc?export=view&id=1GPOEOd774fc2McDuZP_VFfPbLe1MtGSt">
+<meta property="og:image" content="https://drive.google.com/uc?export=view&id=15ajL1XqHTeKKo5RTwL5XOWeZNerYybDq">
+<meta property="article:published_time" content="2016-05-02T15:43:17.000Z">
+<meta property="article:modified_time" content="2020-06-10T04:41:46.948Z">
+<meta property="article:author" content="SJZeng">
+<meta property="article:tag" content="tutorial">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drive.google.com/uc?export=view&id=1c6888Z7vDsF2Iib7V06-RJvkkuU0g2bK">
+
+<link rel="canonical" href="https://sjkou.net/2016/05/02/how-to-install-ghost-on-heroku/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-tw'
+  };
+</script>
+
+  <title>如何在Heroku 上安裝Ghost Blog | 阿狗的程式雜記</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-77793223-3',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿狗的程式雜記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">路漫漫其修遠兮，吾將上下而求索</h1>
+      
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives<span class="badge">23</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="https://sjkou.net/2016/05/02/how-to-install-ghost-on-heroku/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+      <meta itemprop="name" content="SJZeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿狗的程式雜記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          如何在Heroku 上安裝Ghost Blog
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-05-02 23:43:17" itemprop="dateCreated datePublished" datetime="2016-05-02T23:43:17+08:00">2016-05-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-06-10 12:41:46" itemprop="dateModified" datetime="2020-06-10T12:41:46+08:00">2020-06-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2016/05/02/how-to-install-ghost-on-heroku/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/02/how-to-install-ghost-on-heroku/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>近日找遍各大blog</p>
+<p>從外太空找到行天宮終於下定決心在Ghost 定了下來<br>當然如果你想host 一個blog 而不花到任何費用是 <strong>絕對不可能的</strong></p>
+<p>最主要的花費如下</p>
+<ol>
+<li>主機費用</li>
+<li>Domain name 申請</li>
+</ol>
+<p>其實你也可以選擇 <a href="https://zh-tw.wordpress.com/" target="_blank" rel="noopener">wordpress</a>，或者 <a href="http://logdown.com/" target="_blank" rel="noopener">logdown</a> 這些國內外知名的部落格來寫作，如果都選擇最低標準的方案或許不會花到任何錢</p>
+<p><strong>但是身為專業的工程師就要全部自己來阿</strong></p>
+<a id="more"></a>
+
+<p>本篇用到的工具如下</p>
+<p>*<em>Ghost: *</em><br>一套免費開源而且非常精美的blog架站軟體，支援Markdown讓你書寫起來更快速 </p>
+<p>*<em>Heroku: *</em><br>一種支援多種語言的雲端平台服務(PaaS)，能編譯、執行及管理各式各樣的語言平台</p>
+<hr>
+<h2 id="下載並且安裝-Ghost"><a href="#下載並且安裝-Ghost" class="headerlink" title="下載並且安裝 Ghost"></a>下載並且安裝 Ghost</h2><p>首先下載Ghost，可以到這邊<a href="(https://ghost.org/developers/">下載</a>，在撰寫這篇文章的同時Ghost的版本是0.7.9，照著以下的操作說明還是無法架起來的話，可以檢查Ghost的版本是否相符</p>
+<p>下載好之後你可以透過以下指令把檔案解壓縮到網站的目錄下，暫且稱範例網頁為my-blog</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ unzip ghost-0.7.9.zip -d my-blog</span><br></pre></td></tr></table></figure>
+
+<h2 id="設定-Heroku-環境"><a href="#設定-Heroku-環境" class="headerlink" title="設定 Heroku 環境"></a>設定 Heroku 環境</h2><p>若還沒有Heroku 帳號的話可以到這頁面來<a href="https://signup.heroku.com/login" target="_blank" rel="noopener">註冊</a>，完成後便能在你的作業系統上<a href="https://toolbelt.heroku.com/" target="_blank" rel="noopener">安裝Heroku</a>，筆者不推薦在Windows 平台上操作，建議使用Ubuntu 來完成</p>
+<p>安裝好後至command line 輸入指令登入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ heroku login</span><br></pre></td></tr></table></figure>
+
+<h2 id="初始化設定"><a href="#初始化設定" class="headerlink" title="初始化設定"></a>初始化設定</h2><p>登入後移動到網站目錄下，並且建立一個Git Repository 上傳Ghost 的程式碼，之後再建立一個 Heroku app 就完成了<br>當你建立好heroku app之後，heroku 便會產生一個remote uri 至你的 <code>.git/config</code>，你可以使用 <code>less .git/config</code> 來檢查檔案內容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /your/ghost/folder/</span><br><span class="line">$ git init</span><br><span class="line">$ heroku create</span><br></pre></td></tr></table></figure>
+
+<p><code>heroku create</code> 會出現以下訊息，而網頁便會跑在 <a href="https://morning-tor-47399.herokuapp.com/" target="_blank" rel="noopener">https://morning-tor-47399.herokuapp.com/</a> 上</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Creating app... ⬢ morning-tor-47399</span><br><span class="line">https://morning-tor-47399.herokuapp.com/ | https://git.heroku.com/morning-tor-47399.git</span><br></pre></td></tr></table></figure>
+
+<p><code>.git/config</code> 內容：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-attr">[core]</span></span><br><span class="line">    repositoryformatversion = 0</span><br><span class="line">    filemode = true</span><br><span class="line">    bare = false</span><br><span class="line">    logallrefupdates = true</span><br><span class="line"><span class="selector-attr">[remote "heroku"]</span></span><br><span class="line">    url = https://git.heroku.com/damp-lake-83795.git</span><br><span class="line">    fetch = +refs/heads/*:refs/remotes/heroku/*</span><br></pre></td></tr></table></figure>
+
+<h2 id="安裝-Heroku-相關套件"><a href="#安裝-Heroku-相關套件" class="headerlink" title="安裝 Heroku 相關套件"></a>安裝 Heroku 相關套件</h2><p>Ghost 預設的SQL Database 是用SQLite3，如果你不希望用這麼陽春版的資料庫也可以換成PostgreSQL：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ heroku addons:create heroku-postgresql:hobby-dev</span><br></pre></td></tr></table></figure>
+
+<p>安裝後可以執行 <code>heroku config</code> 來看剛剛資料庫設定的訊息，你可能會看到類似的輸出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DATABASE_URL: postgres://qqonqkttfshxui:oGKWpEnyHIKKCgsMIHrHs8aKk@ec2-54-243-63-195.compute-1.amazonaws.com:5432/d24q4651ilbs4n</span><br></pre></td></tr></table></figure>
+
+<p>資料庫的相關訊息如下：</p>
+<ul>
+<li><strong>Database URL</strong>: ec2-54-243-63-195.compute-1.amazonaws.com</li>
+<li><strong>Database Port</strong>: 5432</li>
+<li><strong>Database Name</strong>: d24q4651ilbs4n</li>
+<li><strong>Database UserName</strong>: qqonqkttfshxui</li>
+<li><strong>Database Password</strong>: oGKWpEnyHIKKCgsMIHrHs8aKk</li>
+</ul>
+<h2 id="Ghost-參數設定"><a href="#Ghost-參數設定" class="headerlink" title="Ghost 參數設定"></a>Ghost 參數設定</h2><p>目前為止，已經完成前置作業了，現在要開始來設定Ghost的服務，首先必須先設置參數檔</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp config.example.js config.js</span><br></pre></td></tr></table></figure>
+
+<p>編輯 <code>config.js</code>，在production 的區塊內加入資料庫的設定：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">database: &#123;</span><br><span class="line">    client: <span class="string">'postgres'</span>,</span><br><span class="line">    connection: &#123;</span><br><span class="line">        host: process.env.POSTGRES_HOST,</span><br><span class="line">        user: process.env.POSTGRES_USER,</span><br><span class="line">        password: process.env.POSTGRES_PASSWORD,</span><br><span class="line">        database: process.env.POSTGRES_DATABASE,</span><br><span class="line">        port: <span class="string">'5432'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    debug: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可能會好奇為什麼不改成上面的設定，這點後面會解釋。</p>
+<p>由於啟動Node.js app 時必須綁定一個port，而heroku在每次重新啟動的時候都會動態配給一個port 給Node.js app，因此 <code>config.js</code> 必須加入以下設定<br>找到以下片段：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">host: '127.0.0.1',</span><br><span class="line">port: '2368'</span><br></pre></td></tr></table></figure>
+
+<p>取代成</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">host: '0.0.0.0',</span><br><span class="line">port: process.env.PORT</span><br></pre></td></tr></table></figure>
+
+<p>到這一步後基本上所有的設定都完成了，你可以把目前的code 同步到heroku 上：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">"Committing all Ghost files"</span></span><br><span class="line">git push heroku master</span><br></pre></td></tr></table></figure>
+
+<p>但是上傳上去的網頁還不能正常運作，你可能會看到以下的畫面：<br>![heroku application error]<br>(<a href="https://drive.google.com/uc?export=view&amp;id=1SYp0k6zPbN6rJtOURzocUsAtD9XLdMd7" target="_blank" rel="noopener">https://drive.google.com/uc?export=view&amp;id=1SYp0k6zPbN6rJtOURzocUsAtD9XLdMd7</a>)</p>
+<p>這是因為尚未設定database 的參數還沒有設定好，可以透過 <code>heroku logs</code> 查看錯誤訊息：<br><img data-src="https://drive.google.com/uc?export=view&id=1c6888Z7vDsF2Iib7V06-RJvkkuU0g2bK" alt="database connection error"></p>
+<p>Pool2 是 node.js與資料庫連線的套件，因此還要輸入以下指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ heroku config:<span class="built_in">set</span> POSTGRES_HOST=&lt;value&gt;</span><br><span class="line">$ heroku config:<span class="built_in">set</span> POSTGRES_USER=&lt;value&gt;</span><br><span class="line">$ heroku config:<span class="built_in">set</span> POSTGRES_PASSWORD=&lt;value&gt;</span><br><span class="line">$ heroku config:<span class="built_in">set</span> POSTGRES_DATABASE=&lt;value&gt;</span><br></pre></td></tr></table></figure>
+
+<p>設定好後重新載入網頁就大功告成啦!!</p>
+<h2 id="設定圖片上傳"><a href="#設定圖片上傳" class="headerlink" title="設定圖片上傳"></a>設定圖片上傳</h2><p>為什麼要特地把這單元拿出來講 ? 如果你不是用Heroku 而是用其他網站空間的話不需要設定這一步，因為 Ghost就有內建圖片上傳的功能，而Heroku 不允許檔案的動態新增，想知道更多詳細資料的話可以參考<a href="https://devcenter.heroku.com/articles/dynos#ephemeral-filesystem" target="_blank" rel="noopener">這篇</a>，所以只能透過其他的外掛服務來上傳圖片。</p>
+<p>也因此筆者推薦 Amazon S3 的服務，github上已經有人整理好<a href="https://github.com/muzix/ghost-s3" target="_blank" rel="noopener">plugin</a> 了，只要套上即可</p>
+<p>在網頁目錄下輸入以下指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ npm install --save ghost-s3-storage</span><br><span class="line">$ mkdir -p content/storage/ghost-s3</span><br><span class="line">$ vi content/storage/ghost-s3/index.js</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>index.js</code> 輸入以下文字並儲存：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">'use strict'</span>;</span><br><span class="line"><span class="built_in">module</span>.exports = <span class="built_in">require</span>(<span class="string">'ghost-s3-storage'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>最後只需要告訴Ghost 該如何儲存圖片即可，回到網頁的根目錄並且新增以下內容到 <code>config.js</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">storage: &#123;</span><br><span class="line">    active: <span class="string">'ghost-s3'</span>,</span><br><span class="line">    <span class="string">'ghost-s3'</span>: &#123;</span><br><span class="line">        accessKeyId: process.env.S3_ACCESSKEY,</span><br><span class="line">        secretAccessKey: process.env.S3_SECRETKEY,</span><br><span class="line">        bucket: <span class="string">'ghost-blog-bucket'</span>,</span><br><span class="line">        region: <span class="string">'us-west-2'</span>,</span><br><span class="line">        assetHost: <span class="string">'https://s3-us-west-2.amazonaws.com/ghost-blog-bucket/'</span></span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Amazon s3 的註冊教學可以參考筆者的另一篇<a href="http://sjkou.net/2016/05/06/start-using-amazon-s3/">文章</a><br>最後便可以上傳到github了，不過在上傳前仍有一步需要調整，執行 <code>git status</code> 會看到以下畫面<br><img data-src="https://drive.google.com/uc?export=view&id=1-GEeEMd9bam9Kzx-z79ZaRVxa6CNJXWM" alt="git status"></p>
+<p><code>config.js</code> 及 <code>package.json</code> 是因為剛剛加了 ghost-s3-storage 時所產生的，而 <code>node_modules/</code> 是compile plugin 後產生的資料夾，這個檔案不應該傳到Heroku 上，Heroku只要放Source code 就可以了，因此必須建立 <code>.gitignore</code> 這個檔案，並加入以下內容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">"node_modules/"</span> &gt; .gitignore</span><br><span class="line">$ git add .gitignore</span><br><span class="line">$ git commit -m <span class="string">"Ignore node_modules directory"</span></span><br></pre></td></tr></table></figure>
+
+<p>再來便可以真正的上傳目前的程式碼了，在Command line輸入以下指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git add .</span><br><span class="line">$ git commit -m <span class="string">"add ghost-s3-storage"</span></span><br><span class="line">$ git push heroku master</span><br></pre></td></tr></table></figure>
+
+<p>儘管更新了程式碼，但是打開網頁後它還是死給你看，檢查 <code>heroku logs</code> 後發現噴了一堆 npm ERR!，節錄部分的內容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2016-05-02T15:15:47.014552+00:00 app[web.1]: ERROR: Ghost is unable to start due to missing dependencies:</span><br><span class="line">2016-05-02T15:15:47.014564+00:00 app[web.1]:   Cannot find module &#39;ghost-s3-storage&#39;</span><br></pre></td></tr></table></figure>
+
+<p>導致這個問題發生的主因是因為網站根目錄的 <code>npm-shrinkwrap.json</code> 把套件的相依關係鎖住了，因此需要更新 <code>npm-shrinkwrap.json</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm install</span><br><span class="line">$ npm shrinkwrap</span><br></pre></td></tr></table></figure>
+
+<p>想了解 shrinkwrap 的話可以參考這篇<a href="https://docs.npmjs.com/cli/shrinkwrap" target="_blank" rel="noopener">文章</a></p>
+<p>更新 <code>npm-shrinkwrap.json</code> 後重新push 到github</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git add npm-shrinkwrap.json</span><br><span class="line">$ git commit -m &quot;update shrinkwrap.json&quot;</span><br><span class="line">$ git push heroku master</span><br></pre></td></tr></table></figure>
+
+<p>立刻重新整理你的網頁吧。</p>
+<h2 id="設定信箱服務"><a href="#設定信箱服務" class="headerlink" title="設定信箱服務"></a>設定信箱服務</h2><p>緊接著來介紹Ghost 的mail服務吧</p>
+<p>筆者使用mailgun 來當教學範例，在<a href="https://www.mailgun.com/" target="_blank" rel="noopener">註冊</a>頁面建立帳號後前往後台會看到一個預設的Domain name<br><img data-src="https://drive.google.com/uc?export=view&id=1GPOEOd774fc2McDuZP_VFfPbLe1MtGSt" alt="mailgun 後台"></p>
+<p>進入Domain name的設定頁面後只需要取得 Default SMTP Login 以及 Default Password 兩個欄位的結果而已<br><img data-src="https://drive.google.com/uc?export=view&id=15ajL1XqHTeKKo5RTwL5XOWeZNerYybDq" alt="mailgun Domain information"></p>
+<p>回到網站目錄下的 <code>config.js</code>，在production 區塊下加入SMTP 的相關設定：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mail: &#123;</span><br><span class="line">    transport: <span class="string">'SMTP'</span>,</span><br><span class="line">    options: &#123;</span><br><span class="line">    service: <span class="string">'Mailgun'</span>,</span><br><span class="line">        auth: &#123;</span><br><span class="line">            user: process.env.MAILGUN_USER,</span><br><span class="line">            pass: process.env.MAILGUN_PASS</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<p>存檔好之後加入heroku 的變數：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ heroku config:<span class="built_in">set</span> MAILGUN_USER=&lt;value&gt;</span><br><span class="line">$ heroku config:<span class="built_in">set</span> MAILGUN_PASS=&lt;value&gt;</span><br></pre></td></tr></table></figure>
+
+<p>最後重新push 上heroku 即可大功告成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git add .</span><br><span class="line">$ git commit -m <span class="string">"add mail service"</span></span><br><span class="line">$ git push heroku master</span><br></pre></td></tr></table></figure>
+
+<h2 id="客製化網域"><a href="#客製化網域" class="headerlink" title="客製化網域"></a>客製化網域</h2><p>如果想正式營運一個blog，用Heroku 提供的網址並不是一個好方法<br>因為Heroku 提供的網址太不好記，Domain 給人的感覺就像是見到陌生人的第一印象，你可能會因為這個人的外表去做一些個性上的聯想<br>雖然兩者的關係並不是絕對的，而Domain Name也一樣，從看到名稱開始你可能就會開始想像這個Blog葫蘆裡賣的是什麼藥。</p>
+<p>筆者目前的網域便是在<a href="https://tw.godaddy.com/" target="_blank" rel="noopener">Godaddy</a> 上購買的</p>
+<p>購買完網域之後你必須指定一個 <code>cname</code> 到 你的 Heroku app url，例如本篇的教學網址： <a href="https://morning-tor-47399.herokuapp.com/，新增的方式大致上如下：" target="_blank" rel="noopener">https://morning-tor-47399.herokuapp.com/，新增的方式大致上如下：</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NAME       TYPE   VALUE</span><br><span class="line">--------------------------------------------------</span><br><span class="line">www        CNAME  https://morning-tor-47399.herokuapp.com/</span><br></pre></td></tr></table></figure>
+<p>或者你不希望用www，其他名稱取代也可以，例如blog：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NAME       TYPE   VALUE</span><br><span class="line">--------------------------------------------------</span><br><span class="line">blog       CNAME  https://morning-tor-47399.herokuapp.com/</span><br></pre></td></tr></table></figure>
+
+<p>供應商這邊設定好之後Heroku 設定也一併需要調整，不然你就會看到 <code>Can&#39;t find Heroku app</code> 這個Error了，Heroku 的設定如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ heroku domains:add blog.your_customer_domain.com</span><br></pre></td></tr></table></figure>
+
+<p>恭喜你，你的Blog 現在正式上線了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tutorial/" rel="tag"># tutorial</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2016/05/06/start-using-amazon-s3/" rel="next" title="Amazon S3 申請教學及實作">
+      Amazon S3 申請教學及實作 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-8692845090204404"
+       data-ad-slot="4782987859"
+       data-ad-format="auto"></ins>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#下載並且安裝-Ghost"><span class="nav-number">1.</span> <span class="nav-text">下載並且安裝 Ghost</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#設定-Heroku-環境"><span class="nav-number">2.</span> <span class="nav-text">設定 Heroku 環境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化設定"><span class="nav-number">3.</span> <span class="nav-text">初始化設定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安裝-Heroku-相關套件"><span class="nav-number">4.</span> <span class="nav-text">安裝 Heroku 相關套件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ghost-參數設定"><span class="nav-number">5.</span> <span class="nav-text">Ghost 參數設定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#設定圖片上傳"><span class="nav-number">6.</span> <span class="nav-text">設定圖片上傳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#設定信箱服務"><span class="nav-number">7.</span> <span class="nav-text">設定信箱服務</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客製化網域"><span class="nav-number">8.</span> <span class="nav-text">客製化網域</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SJZeng"
+      src="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+  <p class="site-author-name" itemprop="name">SJZeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/khjay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;khjay" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sjzeng.tw@gmail.com" title="E-Mail → mailto:sjzeng.tw@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/sjzeng" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;sjzeng" rel="noopener" target="_blank"><i class="fa fa-fw fa-linkedin"></i>LinkedIn</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/sjzeng.tw" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;sjzeng.tw" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-8692845090204404"
+          data-ad-slot="4782987859"
+          data-ad-format="auto"></ins>
+
+    </div>
+
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-SinJieZeng"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SJZeng</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://sjkou.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://sjkou.net/2016/05/02/how-to-install-ghost-on-heroku/";
+    this.page.identifier = "2016/05/02/how-to-install-ghost-on-heroku/";
+    this.page.title = "如何在Heroku 上安裝Ghost Blog";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://sjkou.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+  <script>
+    [].forEach.call(document.querySelectorAll('.adsbygoogle'), function(){
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    });
+  </script>
+</body>
+</html>

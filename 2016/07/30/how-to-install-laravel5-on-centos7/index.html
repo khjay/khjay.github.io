@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sjkou.net","root":"/","scheme":"Pisces","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在Codeigniter 上開發了也快一年，前陣子被推坑來laravel，一試完果真回不去了，簡便的指令模式能快速地建立Controller、Model、View 及各種樣板，當下果斷放棄Codeigniter。 在這框架奔放的年代，Laravel 絕對是PHP後端框架最重要的角色沒有之一。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何在CentOS7 上安裝 laravel 5">
+<meta property="og:url" content="https://sjkou.net/2016/07/30/how-to-install-laravel5-on-centos7/index.html">
+<meta property="og:site_name" content="阿狗的程式雜記">
+<meta property="og:description" content="在Codeigniter 上開發了也快一年，前陣子被推坑來laravel，一試完果真回不去了，簡便的指令模式能快速地建立Controller、Model、View 及各種樣板，當下果斷放棄Codeigniter。 在這框架奔放的年代，Laravel 絕對是PHP後端框架最重要的角色沒有之一。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2016-07-29T17:15:54.000Z">
+<meta property="article:modified_time" content="2020-06-10T04:41:46.949Z">
+<meta property="article:author" content="SJZeng">
+<meta property="article:tag" content="tutorial">
+<meta property="article:tag" content="laravel">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://sjkou.net/2016/07/30/how-to-install-laravel5-on-centos7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-tw'
+  };
+</script>
+
+  <title>如何在CentOS7 上安裝 laravel 5 | 阿狗的程式雜記</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-77793223-3',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿狗的程式雜記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">路漫漫其修遠兮，吾將上下而求索</h1>
+      
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives<span class="badge">23</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="https://sjkou.net/2016/07/30/how-to-install-laravel5-on-centos7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+      <meta itemprop="name" content="SJZeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿狗的程式雜記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          如何在CentOS7 上安裝 laravel 5
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-07-30 01:15:54" itemprop="dateCreated datePublished" datetime="2016-07-30T01:15:54+08:00">2016-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-06-10 12:41:46" itemprop="dateModified" datetime="2020-06-10T12:41:46+08:00">2020-06-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2016/07/30/how-to-install-laravel5-on-centos7/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/30/how-to-install-laravel5-on-centos7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在Codeigniter 上開發了也快一年，前陣子被推坑來laravel，一試完果真回不去了，簡便的指令模式能快速地建立Controller、Model、View 及各種樣板，當下果斷放棄Codeigniter。</p>
+<p><strong>在這框架奔放的年代，Laravel 絕對是PHP後端框架最重要的角色沒有之一。</strong></p>
+<a id="more"></a>
+
+<h2 id="設定-Yum-Repositories"><a href="#設定-Yum-Repositories" class="headerlink" title="設定 Yum Repositories"></a>設定 Yum Repositories</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install epel-release -y</span><br><span class="line">$ sudo rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm</span><br></pre></td></tr></table></figure>
+<p>webtatic 的倉庫是為了輔助安裝php7 以上的版本。</p>
+<h2 id="安裝套件"><a href="#安裝套件" class="headerlink" title="安裝套件"></a>安裝套件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install php71w php71w-opcache php71w-fpm php71w-mbstring php71w-dom php71w-pdo php71w-m php71w-mysql php71w-cli php71w-mcrypt httpd mariadb-server</span><br></pre></td></tr></table></figure>
+
+<h2 id="檢查php-指令"><a href="#檢查php-指令" class="headerlink" title="檢查php 指令"></a>檢查php 指令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ php -v</span><br><span class="line">PHP 7.1.0 (cli) (built: Dec  3 2016 11:17:43) ( NTS )</span><br><span class="line">Copyright (c) 1997-2016 The PHP Group</span><br><span class="line">Zend Engine v3.1.0-dev, Copyright (c) 1998-2016 Zend Technologies</span><br><span class="line">    with Zend OPcache v7.1.0, Copyright (c) 1999-2016, by Zend Technologies</span><br></pre></td></tr></table></figure>
+
+<p>如果能看到上方訊息的話，表示php 已經安裝成功。</p>
+<h2 id="啟動相關服務"><a href="#啟動相關服務" class="headerlink" title="啟動相關服務"></a>啟動相關服務</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo systemctl <span class="built_in">enable</span> httpd</span><br><span class="line">$ sudo systemctl start httpd</span><br><span class="line">$ sudo systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line">$ sudo systemctl start mysqld</span><br></pre></td></tr></table></figure>
+<p>分別讓 資料庫 及 網頁伺服器 在開機後自動啟動。</p>
+<h2 id="修改防火牆"><a href="#修改防火牆" class="headerlink" title="修改防火牆"></a>修改防火牆</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo firewall-cmd --permanent --add-port=80/tcp</span><br><span class="line">$ sudo firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<p>CentOS 預設不允許外部連線，所以先手動打開一個port 給外部IP使用，若您的httpd 是listen 其他port 的話，在更改 –add-port=80/tcp 這部分就可以了。</p>
+<h2 id="安裝-composer"><a href="#安裝-composer" class="headerlink" title="安裝 composer"></a>安裝 composer</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl -sS https://getcomposer.org/installer | php</span><br><span class="line">$ sudo mv composer.phar /usr/bin/composer</span><br></pre></td></tr></table></figure>
+<p>composer 是php 的套件管理程式，laravel 便是透過composer 來安裝。</p>
+<h2 id="安裝-laravel"><a href="#安裝-laravel" class="headerlink" title="安裝 laravel"></a>安裝 <code>laravel</code></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/home/sjzeng</span><br><span class="line">$ composer global require <span class="string">"laravel/installer"</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="設定環境變數"><a href="#設定環境變數" class="headerlink" title="設定環境變數"></a>設定環境變數</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ vi ~/.bash_profile</span><br><span class="line">add: `:<span class="variable">$HOME</span>/.config/composer/vendor/bin` to <span class="variable">$path</span> parameter</span><br><span class="line">$ <span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure>
+
+<p>雖然laravel 安裝好了，但當你執行 <code>laravel</code> 這指令時會顯示<code>bash: laravel: command not found</code>，這是因為還沒告訴作業系統要去哪邊執行laravel。</p>
+<h2 id="安裝網站"><a href="#安裝網站" class="headerlink" title="安裝網站"></a>安裝網站</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/home/sjzeng</span><br><span class="line">$ laravel new blog</span><br><span class="line">$ sudo chmod +x /home/sjzeng</span><br></pre></td></tr></table></figure>
+
+<p>您可以將網頁目錄安裝在任意地方。這邊有一個坑，作為網站目錄的資料夾，其所屬的所有上層資料夾都必須有<code>執行</code> 的權限，例如筆者選用 /home/sjzeng/blog 作為網站目錄，則</p>
+<ul>
+<li><p>/home/sjzeng/blog</p>
+</li>
+<li><p>/hom/sjzeng/</p>
+</li>
+<li><p>/home/</p>
+</li>
+<li><p>/</p>
+<p>上方這四個資料夾都必須有 <code>x</code> 的權限。</p>
+</li>
+</ul>
+<h2 id="更改httpd-設定"><a href="#更改httpd-設定" class="headerlink" title="更改httpd 設定"></a>更改httpd 設定</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/httpd/conf/httpd.conf</span><br><span class="line"><span class="comment">#### change to below config ####</span></span><br><span class="line">DocumentRoot <span class="string">"/home/sjzeng/blog/public"</span></span><br><span class="line">&lt;Directory <span class="string">"/home/sjzeng/blog/public"</span>&gt;</span><br><span class="line">　AllowOverride All</span><br><span class="line">&lt;/Directory&gt;</span><br><span class="line"><span class="comment">#### change to above config ####</span></span><br><span class="line">$ sudo systemctl restart httpd</span><br></pre></td></tr></table></figure>
+
+<p>預設的 DocumentRoot 是 <code>/var/www/html</code>，需更改成您安裝網頁的路徑，<br>在httpd 讀取資料夾的地方 <code>&lt;Directory&gt;</code> 也必須更改成網頁的路徑，如果您在 <code>&lt;Directory&gt;</code> 內有其他設定的話，僅需變更 <code>AllowOverride All</code> 這行即可，其餘不需更改。<code>AllowOverride</code> 是讓httpd 讀取 <code>.htaccess</code>的設定。</p>
+<h2 id="更改-SELinux-設定"><a href="#更改-SELinux-設定" class="headerlink" title="更改 SELinux 設定"></a>更改 SELinux 設定</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/home/sjzeng</span><br><span class="line">$ chcon -Rv -t httpd_sys_content_t blog/</span><br></pre></td></tr></table></figure>
+
+<p>CentOS 對內部檔案的權限管理非常嚴謹，當其他使用者在看網頁時，CentOS 內其實是有一名叫做 <code>apache</code> 的使用者在瀏覽您的網頁目錄，雖然如此但 <code>apache</code> 也不是什麼檔案都能看，僅能觀看httpd 相關權限的檔案而已，在還沒修改網站權限時你可以透過 <code>ls -Z</code> 來取得目前的權限。</p>
+<p> 修改前：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ ls -Z</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 app</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 artisan</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 bootstrap</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 composer.json</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 composer.lock</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 config</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 database</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 gulpfile.js</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 package.json</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 phpunit.xml</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 public</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 readme.md</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 resources</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 routes</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 server.php</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 storage</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 tests</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 vendor</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:user_home_t:s0 yarn.lock</span><br></pre></td></tr></table></figure>
+
+<p> 修改後：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 app</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 artisan</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 bootstrap</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 composer.json</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 composer.lock</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 config</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 database</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 gulpfile.js</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 package.json</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 phpunit.xml</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 public</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 readme.md</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 resources</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 routes</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 server.php</span><br><span class="line">drwxrwxrwx. sjzeng sjzeng unconfined_u:object_r:httpd_sys_rw_content_t:s0 storage</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 tests</span><br><span class="line">drwxrwxr-x. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 vendor</span><br><span class="line">-rw-rw-r--. sjzeng sjzeng unconfined_u:object_r:httpd_sys_content_t:s0 yarn.lock</span><br></pre></td></tr></table></figure>
+
+<p>但是 <code>httpd_sys_content_t</code> 僅是瀏覽的權限而已，依據 laravel 的<a href="https://laravel.com/docs/5.3#configuration" target="_blank" rel="noopener">安裝說明</a>，<code>bootstrap/cache</code> 及 <code>storage</code> 這兩個資料夾必須要有寫入的權限，所以需再做以下修改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ chcon -Rv -t httpd_sys_rw_content_t blog/storage</span><br><span class="line">$ chcon -Rv -t httpd_sys_rw_content_t blog/bootstrap/cache</span><br><span class="line">$ sudo chmod -R 777 blog/storage</span><br><span class="line">$ sudo chmod -R 777 blog/bootstrap/cache</span><br></pre></td></tr></table></figure>
+
+<p> 當然如果你不想這麼麻煩的話也可以把SELinux 的檢查關掉，不過非常不建議這招：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo setenforce 0</span><br><span class="line">$ sudo chmod -R 777 blog/storage</span><br><span class="line">$ sudo chmod -R 777 blog/bootstrap/cache</span><br></pre></td></tr></table></figure>
+
+<p>安裝到這邊就大功告成啦，快打開您的瀏覽器輸入IP 試看看吧。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tutorial/" rel="tag"># tutorial</a>
+              <a href="/tags/laravel/" rel="tag"># laravel</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/03/crawler-using-python3-part6/" rel="prev" title="爬蟲實戰 - Using Python3 Part6">
+      <i class="fa fa-chevron-left"></i> 爬蟲實戰 - Using Python3 Part6
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/22/crawler-using-python3-part7/" rel="next" title="爬蟲實戰 - Using Python3 Part7">
+      爬蟲實戰 - Using Python3 Part7 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-8692845090204404"
+       data-ad-slot="4782987859"
+       data-ad-format="auto"></ins>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#設定-Yum-Repositories"><span class="nav-number">1.</span> <span class="nav-text">設定 Yum Repositories</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安裝套件"><span class="nav-number">2.</span> <span class="nav-text">安裝套件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#檢查php-指令"><span class="nav-number">3.</span> <span class="nav-text">檢查php 指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#啟動相關服務"><span class="nav-number">4.</span> <span class="nav-text">啟動相關服務</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改防火牆"><span class="nav-number">5.</span> <span class="nav-text">修改防火牆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安裝-composer"><span class="nav-number">6.</span> <span class="nav-text">安裝 composer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安裝-laravel"><span class="nav-number">7.</span> <span class="nav-text">安裝 laravel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#設定環境變數"><span class="nav-number">8.</span> <span class="nav-text">設定環境變數</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安裝網站"><span class="nav-number">9.</span> <span class="nav-text">安裝網站</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更改httpd-設定"><span class="nav-number">10.</span> <span class="nav-text">更改httpd 設定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更改-SELinux-設定"><span class="nav-number">11.</span> <span class="nav-text">更改 SELinux 設定</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SJZeng"
+      src="https://drive.google.com/uc?export=view&id=1ujzHCRa9s5nKSF2KT5IbmARyfF8f1Y-c">
+  <p class="site-author-name" itemprop="name">SJZeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/khjay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;khjay" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sjzeng.tw@gmail.com" title="E-Mail → mailto:sjzeng.tw@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/sjzeng" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;sjzeng" rel="noopener" target="_blank"><i class="fa fa-fw fa-linkedin"></i>LinkedIn</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/sjzeng.tw" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;sjzeng.tw" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-8692845090204404"
+          data-ad-slot="4782987859"
+          data-ad-format="auto"></ins>
+
+    </div>
+
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-SinJieZeng"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SJZeng</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://sjkou.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://sjkou.net/2016/07/30/how-to-install-laravel5-on-centos7/";
+    this.page.identifier = "2016/07/30/how-to-install-laravel5-on-centos7/";
+    this.page.title = "如何在CentOS7 上安裝 laravel 5";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://sjkou.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+  <script>
+    [].forEach.call(document.querySelectorAll('.adsbygoogle'), function(){
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    });
+  </script>
+</body>
+</html>
